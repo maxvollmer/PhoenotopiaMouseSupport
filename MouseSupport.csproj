@@ -1,0 +1,121 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{685BFD49-6965-4697-B9D7-F258AA15D74E}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>MouseSupport</RootNamespace>
+    <AssemblyName>MouseSupport</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="0Harmony">
+      <HintPath>..\..\..\UnityModManager\0Harmony.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Assembly-CSharp">
+      <HintPath>E:\Spiele\Steam\steamapps\common\Phoenotopia Awakening Demo\PhoenotopiaAwakeningDemo_Data\Managed\Assembly-CSharp.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Assembly-CSharp-firstpass">
+      <HintPath>E:\Spiele\Steam\steamapps\common\Phoenotopia Awakening Demo\PhoenotopiaAwakeningDemo_Data\Managed\Assembly-CSharp-firstpass.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Rewired_Core, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>E:\Spiele\Steam\steamapps\common\Phoenotopia Awakening Demo\PhoenotopiaAwakeningDemo_Data\Managed\Rewired_Core.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="UnityEngine">
+      <HintPath>E:\Spiele\Steam\steamapps\common\Phoenotopia Awakening Demo\PhoenotopiaAwakeningDemo_Data\Managed\UnityEngine.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEngine.Networking">
+      <HintPath>E:\Spiele\Steam\steamapps\common\Phoenotopia Awakening Demo\PhoenotopiaAwakeningDemo_Data\Managed\UnityEngine.Networking.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEngine.UI">
+      <HintPath>E:\Spiele\Steam\steamapps\common\Phoenotopia Awakening Demo\PhoenotopiaAwakeningDemo_Data\Managed\UnityEngine.UI.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityModManager">
+      <HintPath>..\..\..\UnityModManager\UnityModManager.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="MouseSupport\Game\MouseAiming.cs" />
+    <Compile Include="MouseSupport\Game\MouseControl.cs" />
+    <Compile Include="MouseSupport\Game\MouseInputType.cs" />
+    <Compile Include="MouseSupport\Helpers\CursorSpriteHelper.cs" />
+    <Compile Include="MouseSupport\Inventory\InventoryActions.cs" />
+    <Compile Include="MouseSupport\Inventory\InventoryExtraIcons.cs" />
+    <Compile Include="MouseSupport\Inventory\ItemGridScroller.cs" />
+    <Compile Include="MouseSupport\Inventory\SubCommandActions.cs" />
+    <Compile Include="MouseSupport\Inventory\ThingyWheel.cs" />
+    <Compile Include="MouseSupport\Patches\ControlAdapterPatch.cs" />
+    <Compile Include="MouseSupport\Patches\DirectorLogicPatch.cs" />
+    <Compile Include="MouseSupport\Helpers\MouseCursor.cs" />
+    <Compile Include="MouseSupport\Inventory\ItemContextMenuActions.cs" />
+    <Compile Include="MouseSupport\Inventory\ItemDragger.cs" />
+    <Compile Include="MouseSupport\Inventory\ItemGridActions.cs" />
+    <Compile Include="MouseSupport\Inventory\WhichPane.cs" />
+    <Compile Include="MouseSupport\MainEntry.cs" />
+    <Compile Include="MouseSupport\Patches\GaleLogicOnePatch.cs" />
+    <Compile Include="MouseSupport\Patches\MenuLogicPatch.cs" />
+    <Compile Include="MouseSupport\Helpers\MenuStateDetector.cs" />
+    <Compile Include="MouseSupport\Game\MouseControls.cs" />
+    <Compile Include="MouseSupport\Helpers\ReflectionHelper.cs" />
+    <Compile Include="MouseSupport\Helpers\WindowState.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Data\sort.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\trash.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Info.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>echo y | del "E:\Spiele\Steam\steamapps\common\Phoenotopia Awakening Demo\Mods\MouseSupport\*.*"
+xcopy "$(ProjectDir)\bin\Debug\MouseSupport.dll" "E:\Spiele\Steam\steamapps\common\Phoenotopia Awakening Demo\Mods\MouseSupport" /Y /I
+xcopy "$(ProjectDir)\bin\Debug\Info.json" "E:\Spiele\Steam\steamapps\common\Phoenotopia Awakening Demo\Mods\MouseSupport" /Y /I
+xcopy "$(ProjectDir)\bin\Debug\Data\*.*" "E:\Spiele\Steam\steamapps\common\Phoenotopia Awakening Demo\Mods\MouseSupport\Data" /Y /I
+</PostBuildEvent>
+  </PropertyGroup>
+</Project>

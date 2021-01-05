@@ -1,0 +1,12 @@
+﻿{
+  "Id": "MouseSupport",
+  "DisplayName": "MouseSupport",
+  "Author": "Max Vollmer",
+  "Version": "0.0.1-alpha",
+  "ManagerVersion": "0.22.15",
+  "GameVersion": "1.0.0",
+  "AssemblyName": "MouseSupport.dll",
+  "EntryMethod": "MouseSupport.MainEntry.Load",
+  "HomePage": "https://www.nexusmods.com/phoenotopiaawakening/mods/1",
+  "Repository": "https://www.github.com/maxvollmer/PhoenotopiaMouseSupport"
+}
