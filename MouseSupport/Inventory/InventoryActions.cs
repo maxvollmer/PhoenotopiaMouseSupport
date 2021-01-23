@@ -67,7 +67,7 @@ namespace MouseSupport.Inventory
             }
             else
             {
-                ItemGridActions.CheckCursorInGrid(menuLogic.item_grid, cursorPos, cursorSprite, isNewCursorPos);
+                ItemGridCursorActions.CheckCursorInGrid(menuLogic.item_grid, cursorPos, cursorSprite, isNewCursorPos);
             }
 
             if (ItemDragger.IsDragging())
@@ -97,10 +97,17 @@ namespace MouseSupport.Inventory
             {
                 HandleMouseWheel(menuLogic, cursorPos, cursorSprite);
 
-                if (Input.GetMouseButtonDown(0)
-                    && InventoryExtraIcons.IsMouseOver(InventoryExtraIcons.IconID.SORT, cursorPos, cursorSprite))
+                if (InventoryExtraIcons.IsMouseOver(InventoryExtraIcons.IconID.SORT, cursorPos, cursorSprite))
                 {
-                    ItemGridActions.Sort(menuLogic.item_grid);
+                    foreach (MouseButton mouseButton in System.Enum.GetValues(typeof(MouseButton)))
+                    {
+                        if (Input.GetMouseButtonDown((int)mouseButton))
+                        {
+                            bool sorted = ItemGridActions.Sort(menuLogic.item_grid, mouseButton);
+                            if (sorted)
+                                break;
+                        }
+                    }
                 }
             }
         }

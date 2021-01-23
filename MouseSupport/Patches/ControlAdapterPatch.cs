@@ -2,6 +2,8 @@
 using HarmonyLib;
 using UnityEngine;
 using MouseSupport.Helpers;
+using UnityModManagerNet;
+using System.Reflection;
 
 namespace MouseSupport.Patches
 {
@@ -27,6 +29,12 @@ namespace MouseSupport.Patches
             [HarmonyPostfix]
             public static void Postfix(string actionName, ref bool __result)
             {
+                if (UnityModManager.UI.Instance.Opened)
+                {
+                    __result = false;
+                    return;
+                }
+
                 if (__result)
                     return;
 
@@ -43,6 +51,12 @@ namespace MouseSupport.Patches
             [HarmonyPostfix]
             public static void Postfix(string actionName, ref bool __result)
             {
+                if (UnityModManager.UI.Instance.Opened)
+                {
+                    __result = false;
+                    return;
+                }
+
                 if (__result)
                     return;
 

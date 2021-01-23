@@ -36,18 +36,15 @@
       <HintPath>..\..\..\UnityModManager\0Harmony.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="Assembly-CSharp">
-      <HintPath>E:\Spiele\Steam\steamapps\common\Phoenotopia Awakening Demo\PhoenotopiaAwakeningDemo_Data\Managed\Assembly-CSharp.dll</HintPath>
-      <Private>False</Private>
+    <Reference Include="Assembly-CSharp, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>E:\Spiele\Steam\steamapps\common\Phoenotopia Awakening\PhoenotopiaAwakening_Data\Managed\Assembly-CSharp.dll</HintPath>
     </Reference>
     <Reference Include="Assembly-CSharp-firstpass">
-      <HintPath>E:\Spiele\Steam\steamapps\common\Phoenotopia Awakening Demo\PhoenotopiaAwakeningDemo_Data\Managed\Assembly-CSharp-firstpass.dll</HintPath>
-      <Private>False</Private>
+      <HintPath>E:\Spiele\Steam\steamapps\common\Phoenotopia Awakening\PhoenotopiaAwakening_Data\Managed\Assembly-CSharp-firstpass.dll</HintPath>
     </Reference>
-    <Reference Include="Rewired_Core, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>E:\Spiele\Steam\steamapps\common\Phoenotopia Awakening Demo\PhoenotopiaAwakeningDemo_Data\Managed\Rewired_Core.dll</HintPath>
-      <Private>False</Private>
+    <Reference Include="Rewired_Core">
+      <HintPath>E:\Spiele\Steam\steamapps\common\Phoenotopia Awakening\PhoenotopiaAwakening_Data\Managed\Rewired_Core.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -56,16 +53,13 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
     <Reference Include="UnityEngine">
-      <HintPath>E:\Spiele\Steam\steamapps\common\Phoenotopia Awakening Demo\PhoenotopiaAwakeningDemo_Data\Managed\UnityEngine.dll</HintPath>
-      <Private>False</Private>
+      <HintPath>E:\Spiele\Steam\steamapps\common\Phoenotopia Awakening\PhoenotopiaAwakening_Data\Managed\UnityEngine.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.Networking">
-      <HintPath>E:\Spiele\Steam\steamapps\common\Phoenotopia Awakening Demo\PhoenotopiaAwakeningDemo_Data\Managed\UnityEngine.Networking.dll</HintPath>
-      <Private>False</Private>
+      <HintPath>E:\Spiele\Steam\steamapps\common\Phoenotopia Awakening\PhoenotopiaAwakening_Data\Managed\UnityEngine.Networking.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.UI">
-      <HintPath>E:\Spiele\Steam\steamapps\common\Phoenotopia Awakening Demo\PhoenotopiaAwakeningDemo_Data\Managed\UnityEngine.UI.dll</HintPath>
-      <Private>False</Private>
+      <HintPath>E:\Spiele\Steam\steamapps\common\Phoenotopia Awakening\PhoenotopiaAwakening_Data\Managed\UnityEngine.UI.dll</HintPath>
     </Reference>
     <Reference Include="UnityModManager">
       <HintPath>..\..\..\UnityModManager\UnityModManager.dll</HintPath>
@@ -77,8 +71,11 @@
     <Compile Include="MouseSupport\Game\MouseControl.cs" />
     <Compile Include="MouseSupport\Game\MouseInputType.cs" />
     <Compile Include="MouseSupport\Helpers\CursorSpriteHelper.cs" />
+    <Compile Include="MouseSupport\Helpers\MouseButton.cs" />
     <Compile Include="MouseSupport\Inventory\InventoryActions.cs" />
     <Compile Include="MouseSupport\Inventory\InventoryExtraIcons.cs" />
+    <Compile Include="MouseSupport\Inventory\Item.cs" />
+    <Compile Include="MouseSupport\Inventory\ItemGridActions.cs" />
     <Compile Include="MouseSupport\Inventory\ItemGridScroller.cs" />
     <Compile Include="MouseSupport\Inventory\SubCommandActions.cs" />
     <Compile Include="MouseSupport\Inventory\ThingyWheel.cs" />
@@ -87,7 +84,7 @@
     <Compile Include="MouseSupport\Helpers\MouseCursor.cs" />
     <Compile Include="MouseSupport\Inventory\ItemContextMenuActions.cs" />
     <Compile Include="MouseSupport\Inventory\ItemDragger.cs" />
-    <Compile Include="MouseSupport\Inventory\ItemGridActions.cs" />
+    <Compile Include="MouseSupport\Inventory\ItemGridCursorActions.cs" />
     <Compile Include="MouseSupport\Inventory\WhichPane.cs" />
     <Compile Include="MouseSupport\MainEntry.cs" />
     <Compile Include="MouseSupport\Patches\GaleLogicOnePatch.cs" />
@@ -96,6 +93,7 @@
     <Compile Include="MouseSupport\Game\MouseControls.cs" />
     <Compile Include="MouseSupport\Helpers\ReflectionHelper.cs" />
     <Compile Include="MouseSupport\Helpers\WindowState.cs" />
+    <Compile Include="MouseSupport\Settings\ModSettings.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -108,14 +106,18 @@
     <Content Include="Info.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="README.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>echo y | del "E:\Spiele\Steam\steamapps\common\Phoenotopia Awakening Demo\Mods\MouseSupport\*.*"
-xcopy "$(ProjectDir)\bin\Debug\MouseSupport.dll" "E:\Spiele\Steam\steamapps\common\Phoenotopia Awakening Demo\Mods\MouseSupport" /Y /I
-xcopy "$(ProjectDir)\bin\Debug\Info.json" "E:\Spiele\Steam\steamapps\common\Phoenotopia Awakening Demo\Mods\MouseSupport" /Y /I
-xcopy "$(ProjectDir)\bin\Debug\Data\*.*" "E:\Spiele\Steam\steamapps\common\Phoenotopia Awakening Demo\Mods\MouseSupport\Data" /Y /I
+    <PostBuildEvent>echo y | del "E:\Spiele\Steam\steamapps\common\Phoenotopia Awakening\Mods\MouseSupport\*.*"
+xcopy "$(ProjectDir)\bin\Debug\MouseSupport.dll" "E:\Spiele\Steam\steamapps\common\Phoenotopia Awakening\Mods\MouseSupport" /Y /I
+xcopy "$(ProjectDir)\bin\Debug\Info.json" "E:\Spiele\Steam\steamapps\common\Phoenotopia Awakening\Mods\MouseSupport" /Y /I
+xcopy "$(ProjectDir)\bin\Debug\README.txt" "E:\Spiele\Steam\steamapps\common\Phoenotopia Awakening\Mods\MouseSupport" /Y /I
+xcopy "$(ProjectDir)\bin\Debug\Data\*.*" "E:\Spiele\Steam\steamapps\common\Phoenotopia Awakening\Mods\MouseSupport\Data" /Y /I
 </PostBuildEvent>
   </PropertyGroup>
 </Project>

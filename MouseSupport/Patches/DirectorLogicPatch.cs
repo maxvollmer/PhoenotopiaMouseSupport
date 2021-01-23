@@ -7,6 +7,8 @@ namespace MouseSupport.Patches
 {
     public class DirectorLogicPatch
     {
+        public static bool IsInControlSetup { get; set; } = false;
+
         [HarmonyPatch(typeof(DirectorLogic), "_Control_View", typeof(StringBuilder))]
         public class DirectorLogicControlViewPatch
         {
@@ -32,6 +34,8 @@ namespace MouseSupport.Patches
                 if (ReInput.players.Players.Count == 0)
                     return;
 
+                IsInControlSetup = true;
+
                 ReInput.players.Players[0].controllers.hasMouse = true;
                 __instance.control.control_mapper.showMouse = true;
             }
@@ -49,6 +53,8 @@ namespace MouseSupport.Patches
 
                 if (ReInput.players.Players.Count > 0)
                     ReInput.players.Players[0].controllers.hasMouse = false;
+
+                IsInControlSetup = false;
             }
         }
     }

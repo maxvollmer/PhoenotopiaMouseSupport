@@ -1,26 +1,18 @@
 ﻿using UnityEngine;
 using MouseSupport.Helpers;
+using System.Collections.Generic;
+using System;
+using System.Linq;
 
 namespace MouseSupport.Inventory
 {
     public class ItemGridActions
     {
-
-        public static void CheckCursorInGrid(ItemGridLogic item_grid, Vector3 cursorPos, SpriteRenderer cursorSprite, bool isNewCursorPos)
+        private static Dictionary<MouseButton, IComparer<Item>> SortTypes = new Dictionary<MouseButton, IComparer<Item>>()
         {
-            int[] spriteIndicesToSkip = null;
-            if (item_grid.current_menu_type == MenuLogic.MENU_TYPE.P1_STATUS)
-            {
-                spriteIndicesToSkip = PT2.save_file.FetchData(MenuLogic.MENU_TYPE.P1_STATUS, true, null);
-            }
-
-            CheckCursorInGridPane(item_grid, cursorPos, isNewCursorPos, cursorSprite, spriteIndicesToSkip, WhichPane.LEFT);
-
-            if (!ReflectionHelper.GetMemberValue<bool>(item_grid, "_both_panes_in_action"))
-                return;
-
-            CheckCursorInGridPane(item_grid, cursorPos, isNewCursorPos, cursorSprite, spriteIndicesToSkip, WhichPane.RIGHT);
-        }
+            {MouseButton.PRIMARY, new Item.HealComparer() },
+            {MouseButton.SECONDARY, new Item.PriceComparer() },
+        };
 
         public static void Discard(ItemGridLogic item_grid, WhichPane whichPane, int cursorIndex)
         {
@@ -33,81 +25,81 @@ namespace MouseSupport.Inventory
             item_grid.FromSubCommands_Discard();
         }
 
-        public static void Sort(ItemGridLogic item_grid)
+        public static bool Sort(ItemGridLogic item_grid, MouseButton mouseButton)
         {
+            if (!SortTypes.TryGetValue(mouseButton, out var itemComparer))
+                return false;
 
-        }
+            SpriteRenderer[] sprites = ReflectionHelper.GetMemberValue<SpriteRenderer[]>(item_grid, "_left_pane_sprites");
+            int[] itemIDs = ReflectionHelper.GetMemberValue<int[]>(PT2.save_file, "_item_IDs");
+            int[] itemCounts = ReflectionHelper.GetMemberValue<int[]>(PT2.save_file, "_item_ID_count");
+            int itemLimit = ReflectionHelper.GetMemberValue<int>(item_grid, "_L_EFFECTIVE_ITEM_LIMIT");
 
-        private static void CheckCursorInGridPane(ItemGridLogic item_grid, Vector3 cursorPos, bool isNewCursorPos, SpriteRenderer cursorSprite, int[] spriteIndicesToSkip, WhichPane whichPane)
-        {
-            SpriteRenderer[] paneSprites = ReflectionHelper.GetMemberValue<SpriteRenderer[]>(item_grid, whichPane == WhichPane.LEFT ? "_left_pane_sprites" : "_right_pane_sprites");
-            if (paneSprites == null)
-                return;
+            Dictionary<int, Item> items = new Dictionary<int, Item>();
 
-            int itemLimit = ReflectionHelper.GetMemberValue<int>(item_grid, whichPane == WhichPane.LEFT ? "_L_EFFECTIVE_ITEM_LIMIT" : "_R_EFFECTIVE_ITEM_LIMIT");
-            int cursorIndex = CursorSpriteHelper.FindSpriteAtCursor(cursorPos, cursorSprite, paneSprites, itemLimit, spriteIndicesToSkip);
-            if (cursorIndex >= 0)
+            for (int i = 0; i < itemLimit; i++)
             {
-                if (isNewCursorPos)
+                if (items.ContainsKey(itemIDs[i]))
                 {
-                    UpdateCursor(item_grid, cursorIndex, whichPane);
+                    items[itemIDs[i]].count += itemCounts[i];
                 }
-                DoMouseInteractions(item_grid, cursorIndex, whichPane, paneSprites[cursorIndex]);
-                return;
-            }
-        }
-
-        private static void UpdateCursor(ItemGridLogic item_grid, int cursorindex, WhichPane whichPane)
-        {
-            if (ReflectionHelper.CompareMemberValue(item_grid, "_cursor_in_left_pane", whichPane == WhichPane.LEFT)
-                && ReflectionHelper.CompareMemberValue(item_grid, "_cursor_index", cursorindex))
-            {
-                // Already at this cursor index, skipping
-                return;
-            }
-
-            if (!ReflectionHelper.CompareMemberValue(item_grid, "_cursor_in_left_pane", whichPane == WhichPane.LEFT)
-                && ReflectionHelper.GetMemberValue<bool>(item_grid, "_in_swap_mode"))
-            {
-                ReflectionHelper.InvokeMethod(item_grid, "_CancelSwap");
-            }
-
-            PT2.sound_g.PlayGlobalCommonSfx(124, 1f, src_index: 2);
-
-            ReflectionHelper.SetMemberValue(item_grid, "_cursor_in_left_pane", whichPane == WhichPane.LEFT);
-            ReflectionHelper.SetMemberValue(item_grid, "_cursor_index", cursorindex);
-
-            ReflectionHelper.InvokeMethod(item_grid, "_SetCursorPosition", true);
-        }
-
-        private static void DoMouseInteractions(ItemGridLogic item_grid, int cursorindex, WhichPane whichPane, SpriteRenderer selectedItemSprite)
-        {
-            if (Input.GetMouseButtonDown(1))
-            {
-                item_grid.HandleConfirm();
-            }
-            else if (Input.GetMouseButtonDown(0))
-            {
-                if (ReflectionHelper.GetMemberValue<bool>(item_grid, "_in_swap_mode"))
+                else
                 {
-                    ReflectionHelper.InvokeMethod(item_grid, "_CancelSwap");
+                    items.Add(itemIDs[i], new Item(id: itemIDs[i], count: itemCounts[i]));
                 }
-                ItemDragger.StartDragging(selectedItemSprite, cursorindex, whichPane);
+                PT2.juicer.J_TimeFree_ScaleSineWobble(sprites[i].transform, Vector3.one);
             }
-            else if (Input.GetMouseButtonUp(0))
+
+            var sortedItems = items.Values.OrderByDescending(i => i, itemComparer).ToList();
+            for (int i = 0; i < sortedItems.Count; i++)
             {
-                if (ItemDragger.IsDragging())
+                if (sortedItems[i].count > sortedItems[i].maxcount)
                 {
-                    if (!ItemDragger.IsPane(whichPane))
-                    {
-                        ItemDragger.StopDragging(true);
-                    }
-                    else
-                    {
-                        ItemDragger.FinishDragging(item_grid, cursorindex, whichPane);
-                    }
+                    var toomuch = sortedItems[i].count - sortedItems[i].maxcount;
+                    sortedItems[i].count = sortedItems[i].maxcount;
+                    sortedItems.Insert(i + 1, new Item(sortedItems[i].id, toomuch));
                 }
             }
+
+            while (sortedItems.Count < itemLimit)
+            {
+                sortedItems.Add(new Item(0, 0));
+            }
+
+            // this should never happen, but just to be extra sure...
+            if (sortedItems.Count > itemLimit)
+            {
+                PT2.sound_g.PlayGlobalCommonSfx(123, 1f, 1f, 2);
+                MainEntry.Mod.Logger.Warning("Something went wrong while sorting, got " + sortedItems.Count + " sorted items, but limit is " + itemLimit + ". Canceled sort.");
+                return false;
+            }
+
+            PT2.sound_g.PlayGlobalCommonSfx(125, 1f, 1f, 2);
+
+            for (int i = 0; i < sortedItems.Count; i++)
+            {
+                sprites[i].sprite = sortedItems[i].sprite;
+                ReflectionHelper.SetMemberArrayValue(PT2.save_file, "_item_IDs", i, sortedItems[i].id);
+                ReflectionHelper.SetMemberArrayValue(PT2.save_file, "_item_ID_count", i, sortedItems[i].count);
+            }
+
+            PT2.save_file.gales_using_item_DI = sortedItems.FindIndex(item => item.id == PT2.save_file.gales_using_item_ID);
+            PT2.save_file.tool_hud_DI = sortedItems.FindIndex(item => item.id == PT2.save_file.tool_hud_ID);
+
+            for (int i = 0; i < 8; i++)
+            {
+                var index = sortedItems.FindIndex(item => item.id == ReflectionHelper.GetMemberArrayValue<int>(PT2.save_file, "_wheel_IDs", i));
+                ReflectionHelper.SetMemberArrayValue(PT2.save_file, "_wheel_DIs", i, index);
+            }
+
+            PT2.save_file.SLOTS_USED = sortedItems.Where(item => item.id != 0).Count();
+
+            item_grid.UpdateSlotsText();
+            PT2.thing_wheel.UpdateToolHudGraphics(swapping_equip: false, item_depleted: false);
+            PT2.thing_wheel.UpdateWheelGraphics();
+            ReflectionHelper.InvokeMethod(item_grid, "_Grid_TurnOnNumbers");
+
+            return true;
         }
     }
 }

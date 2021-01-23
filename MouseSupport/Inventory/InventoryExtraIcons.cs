@@ -82,7 +82,6 @@ namespace MouseSupport.Inventory
                 var text = Object.Instantiate(ReflectionHelper.GetMemberValue<TextMeshPro>(item_grid, "_capacity_text"));
                 text.transform.SetParent(spriteObject.transform, true);
                 text.transform.localPosition = new Vector3(0f, -1f, 0f);
-                //text.transform.localScale = Vector3.one * 0.5f;
                 text.text = subtitle;
             }
 

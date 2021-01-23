@@ -3,11 +3,16 @@ using HarmonyLib;
 using System.Reflection;
 using UnityEngine;
 using MouseSupport.Helpers;
+using Rewired;
+using MouseSupport.Patches;
+using MouseSupport.Settings;
 
 namespace MouseSupport
 {
     public class MainEntry
     {
+        public static ModSettings Settings { get; set; } = new ModSettings();
+
         public static UnityModManager.ModEntry Mod { get; private set; }
 
         private static Harmony harmonyInstance = null;
@@ -18,10 +23,21 @@ namespace MouseSupport
             Mod = modEntry;
             harmonyInstance = new Harmony("de.maxvollmer.phoenotopia.mousesupport");
             modEntry.OnUpdate += OnUpdate;
-            modEntry.OnFixedGUI += OnFixedGUI;
+            modEntry.OnGUI += OnGUI;
             modEntry.OnToggle += OnToggle;
+            modEntry.OnSaveGUI += OnSave;
 
             return true;
+        }
+
+        private static void OnGUI(UnityModManager.ModEntry modEntry)
+        {
+            Settings.Draw(modEntry);
+        }
+
+        private static void OnSave(UnityModManager.ModEntry modEntry)
+        {
+            Settings.Save(modEntry);
         }
 
         private static bool OnToggle(UnityModManager.ModEntry modEntry, bool value)
@@ -32,49 +48,29 @@ namespace MouseSupport
                 harmonyInstance.PatchAll(Assembly.GetExecutingAssembly());
                 Game.MouseControls.ParseMouseControls();
                 windowState = Camera.main.gameObject.AddComponent<WindowState>();
+                Settings = ModSettings.Load<ModSettings>(modEntry);
             }
             else
             {
                 modEntry.Logger.Log("Unpatching all the things");
                 harmonyInstance.UnpatchAll("de.maxvollmer.phoenotopia.mousesupport");
-                UnityEngine.Object.Destroy(windowState);
+                Object.Destroy(windowState);
                 windowState = null;
+                Settings.Save(modEntry);
             }
 
             return true;
         }
 
-
-
         private static void OnUpdate(UnityModManager.ModEntry modEntry, float dt)
         {
-            /*
-            modEntry.Logger.Log("OnUpdate");
-
-            modEntry.Logger.Log("PT2.game_paused: " + PT2.game_paused);
-            modEntry.Logger.Log("PT2.menu.is_active: " + PT2.menu.is_active);
-            modEntry.Logger.Log("PT2.tv_hud._pause_screen.activeSelf: " + PT2.tv_hud.transform.Find("PauseScreen").gameObject.activeSelf);
-
-            foreach (var openingMenuLogic in Resources.FindObjectsOfTypeAll<OpeningMenuLogic>())
+            if (!DirectorLogicPatch.IsInControlSetup)
             {
-                modEntry.Logger.Log("OpeningMenuLogic: " + openingMenuLogic);
+                // Disable game's mouse controls as they interfere with our menu logic. We handle mouse controls completely
+                PT2.director.control.control_mapper.showMouse = false;
+                if (ReInput.players.Players.Count > 0)
+                    ReInput.players.Players[0].controllers.hasMouse = false;
             }
-
-            foreach (var directorLogic in Resources.FindObjectsOfTypeAll<DirectorLogic>())
-            {
-                modEntry.Logger.Log("DirectorLogic: " + directorLogic);
-                modEntry.Logger.Log("is_directing: " + directorLogic.is_directing);
-                modEntry.Logger.Log("_is_SELECT_PAUSE: " + directorLogic._is_SELECT_PAUSE);
-                modEntry.Logger.Log("DialoguersAreInOperation: " + directorLogic.DialoguersAreInOperation());
-                //modEntry.Logger.Log("_in_ACTIONS_mode: " + directorLogic._in_ACTIONS_mode);
-            }
-            */
-        }
-
-        private static void OnFixedGUI(UnityModManager.ModEntry modEntry)
-        {
-            // save_file.HowMuchCanBeAdded
-            // save_file.AddItemToolOrStatusIdToInventory
         }
     }
 }

@@ -30,6 +30,7 @@ namespace MouseSupport.Game
             );
         }
 
+        /*
         public static void UpdateCrossbowAim(GaleLogicOne galeLogicOne)
         {
             ReflectionHelper.SetMemberValue(galeLogicOne, "velocity", ReflectionHelper.GetMemberValue<Vector3>(galeLogicOne, "velocity") * 0.85f);
@@ -58,6 +59,7 @@ namespace MouseSupport.Game
 
             UpdateCrossbowAnimation(galeLogicOne, crossbolt_angle);
         }
+        */
 
         private static float CalcAimAngle()
         {

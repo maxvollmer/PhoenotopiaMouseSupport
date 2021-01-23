@@ -11,9 +11,19 @@ namespace MouseSupport.Helpers
             return Traverse.Create(o).Field(memberName).GetValue<T>();
         }
 
+        public static T GetMemberArrayValue<T>(object o, string memberName, int index)
+        {
+            return GetMemberValue<T[]>(o, memberName)[index];
+        }
+
         public static void SetMemberValue(object o, string memberName, object value)
         {
             Traverse.Create(o).Field(memberName).SetValue(value);
+        }
+
+        public static void SetMemberArrayValue<T>(object o, string memberName, int index, T value)
+        {
+            GetMemberValue<T[]>(o, memberName)[index] = value;
         }
 
         public static bool CompareMemberValue(object o, string memberName, object value)
